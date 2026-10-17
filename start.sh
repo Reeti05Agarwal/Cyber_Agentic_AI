@@ -21,7 +21,7 @@ fi
 
 echo ""
 echo "🚀 Starting CyberSentinel AI v2.0..."
-echo "   Dashboard: http://localhost:3000"
+echo "   Dashboard: http://localhost:3002"
 echo "   API:       http://localhost:8000"
 echo ""
 

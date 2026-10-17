@@ -91,7 +91,7 @@ docker compose up -d
 
 ### 6. Open the Dashboard
 
-Go to **[http://localhost:3000](http://localhost:3000)** in your browser.
+Go to **[http://localhost:3002](http://localhost:3002)** in your browser.
 
 That's it! 🎉
 

@@ -39,7 +39,7 @@ if [ $? -eq 0 ]; then
     echo "═══════════════════════════════════════════════"
     echo "  CyberSentinel AI v2.0 is RUNNING!"
     echo ""
-    echo "  Dashboard:  http://localhost:3000"
+    echo "  Dashboard:  http://localhost:3002"
     echo "  API:        http://localhost:8000"
     echo "  API Docs:   http://localhost:8000/docs"
     echo "  Neo4j:      http://localhost:7474"

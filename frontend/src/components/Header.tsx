@@ -21,14 +21,14 @@ export default function Header({ providers, provider, serviceHealth, onProviderC
   return (
     <header className="col-span-full bg-cs-bg2 border-b border-cs-border flex items-center justify-between px-4 z-10">
       <div className="flex items-center gap-3 cursor-pointer select-none" onClick={onNewChat}>
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cs-cyan to-cs-purple flex items-center justify-center text-sm font-extrabold text-cs-bg font-mono">CS</div>
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cs-cyan to-cs-purple flex items-center justify-center text-sm font-extrabold text-cs-bg font-mono">CA</div>
         <div className="leading-tight">
-          <div className="font-bold text-sm tracking-tight">Cyber<span className="text-cs-cyan">Sentinel</span> AI <span className="text-[0.6rem] text-cs-text3 bg-cs-bg3 px-1.5 py-0.5 rounded font-mono ml-1">33 TOOLS</span></div>
-          <div className="text-[0.5rem] text-cs-text3 font-mono">powered by <span className="text-cs-cyan/70">SolventCyber.com</span></div>
+          <div className="font-bold text-sm tracking-tight">Cyber <span className="text-cs-cyan">Agentic</span> AI <span className="text-[0.6rem] text-cs-text3 bg-cs-bg3 px-1.5 py-0.5 rounded font-mono ml-1">MCP + AGENTS</span></div>
+          <div className="text-[0.5rem] text-cs-text3 font-mono">built on <span className="text-cs-cyan/70">CyberSentinel AI</span> (open source)</div>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <a href="https://solventcyber.com" target="_blank" className="text-[0.6rem] text-cs-orange font-mono font-bold hidden lg:block hover:text-cs-cyan">SOLVENTCYBER.COM</a>
+        <a href="https://github.com/Reeti05Agarwal/Cyber_Agentic_AI" target="_blank" rel="noreferrer" className="text-[0.6rem] text-cs-orange font-mono font-bold hidden lg:block hover:text-cs-cyan">GITHUB</a>
         <div className="flex items-center gap-1 bg-cs-bg/60 border border-cs-border rounded-lg px-1.5 py-1">
           {aiButtons.map(ai => {
             const prov = providers.find(p => p.id === ai.id)

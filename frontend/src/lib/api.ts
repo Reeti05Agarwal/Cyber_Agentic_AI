@@ -326,7 +326,7 @@ export async function exportPDF(messages: {role: string; content: string}[], tit
   const res = await apiFetch(`${API_URL}/api/export/pdf`, {
     method: 'POST',
     headers: apiHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ messages, title: title || 'CyberSentinel Security Report', format: 'pdf' }),
+    body: JSON.stringify({ messages, title: title || 'Cyber Agentic AI Security Report', format: 'pdf' }),
   });
   return res.blob();
 }

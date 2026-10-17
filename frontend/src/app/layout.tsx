@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'CyberSentinel AI - Agentic Multi-Tool Security Platform',
-  description: '33 security tools, provider-agnostic AI, Docker-powered.',
+  title: 'Cyber Agentic AI - Multi-Agent Security Platform with MCP',
+  description: 'Multi-agent security investigations with MCP tools and a local LLM, Docker-powered.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -24,7 +24,7 @@ export default function ChatMessages({ msgs, streaming, streamText, streamTimer,
       {msgs.map((msg, i) => (
         <div key={i} className="flex gap-3 my-3 animate-slide-in group/msg">
           <div className={`w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[0.7rem] font-semibold border ${msg.role === 'user' ? 'bg-cs-bg3 border-cs-border text-cs-text2' : 'bg-cs-bg4 border-cs-border2 text-cs-text'}`}>
-            {msg.role === 'user' ? 'You' : 'CS'}
+            {msg.role === 'user' ? 'You' : 'CA'}
           </div>
           <div className={`border rounded-lg px-4 py-3 max-w-[85%] text-sm leading-relaxed relative ${msg.role === 'user' ? 'bg-cs-bg3 border-cs-border' : 'bg-cs-bg2 border-cs-border'}`}>
             <div className="chat-content select-text" dangerouslySetInnerHTML={{ __html: fmtMsg(msg.content) }} />
@@ -48,7 +48,7 @@ export default function ChatMessages({ msgs, streaming, streamText, streamTimer,
 
       {streaming && (
         <div className="flex gap-3 my-3 animate-slide-in">
-          <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[0.7rem] font-semibold border bg-cs-bg4 border-cs-border2 text-cs-text">CS</div>
+          <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[0.7rem] font-semibold border bg-cs-bg4 border-cs-border2 text-cs-text">CA</div>
           <div className="bg-cs-bg2 border border-cs-border rounded-lg px-4 py-3 max-w-[85%] text-sm leading-relaxed w-full">
             {streamText ? (
               <div className="chat-content select-text" dangerouslySetInnerHTML={{ __html: fmtMsg(streamText) }} />

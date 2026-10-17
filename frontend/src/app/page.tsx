@@ -182,12 +182,12 @@ export default function Dashboard() {
   const stopStream = () => { abortRef.current = true; abortCtrlRef.current?.abort(); genRef.current++ }
 
   const exportMd = () => {
-    const md = msgs.map(m => `## ${m.role === 'user' ? 'You' : 'CyberSentinel'}\n\n${m.content}`).join('\n\n---\n\n')
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([`# CyberSentinel Export\n\n${md}`], { type: 'text/markdown' })); a.download = `cybersentinel-${Date.now()}.md`; a.click()
+    const md = msgs.map(m => `## ${m.role === 'user' ? 'You' : 'Cyber Agentic AI'}\n\n${m.content}`).join('\n\n---\n\n')
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([`# Cyber Agentic AI Export\n\n${md}`], { type: 'text/markdown' })); a.download = `cyber-agentic-ai-${Date.now()}.md`; a.click()
   }
 
   const exportPdf = async () => {
-    try { const blob = await exportPDF(msgs.map(m => ({ role: m.role, content: m.content }))); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cybersentinel-report-${Date.now()}.pdf`; a.click() } catch { exportMd() }
+    try { const blob = await exportPDF(msgs.map(m => ({ role: m.role, content: m.content }))); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cyber-agentic-ai-report-${Date.now()}.pdf`; a.click() } catch { exportMd() }
   }
 
   const handleProviderChange = async (id: string) => {
@@ -275,7 +275,7 @@ export default function Dashboard() {
         <div className="max-w-4xl mx-auto w-full pt-1 pb-2">
           <div className="flex gap-2 items-end">
             {sandboxOk && <button onClick={() => setShowScan(true)} className="h-12 px-3 rounded-lg bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium shrink-0 hover:text-cs-text hover:border-cs-border2 transition-colors" title="Live security scan">Scan</button>}
-            <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKey} placeholder={streaming ? 'Streaming...' : 'Ask CyberSentinel anything...'} disabled={streaming} rows={1} className="flex-1 bg-cs-bg2 border border-cs-border text-cs-text rounded-lg px-4 py-3 text-sm outline-none resize-none min-h-[48px] max-h-[160px] focus:border-cs-border2 placeholder:text-cs-text3 disabled:opacity-50 font-sans" />
+            <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKey} placeholder={streaming ? 'Streaming...' : 'Ask Cyber Agentic AI anything...'} disabled={streaming} rows={1} className="flex-1 bg-cs-bg2 border border-cs-border text-cs-text rounded-lg px-4 py-3 text-sm outline-none resize-none min-h-[48px] max-h-[160px] focus:border-cs-border2 placeholder:text-cs-text3 disabled:opacity-50 font-sans" />
             <button onClick={() => send()} disabled={streaming} className="h-12 px-4 rounded-lg bg-cs-cyan text-cs-bg text-sm font-semibold shrink-0 hover:bg-cs-cyan/90 transition-colors disabled:opacity-50">Send</button>
           </div>
           <div className="text-xs text-cs-text3 mt-1.5 px-1">
@@ -384,7 +384,7 @@ export default function Dashboard() {
           <div className="text-xs font-medium text-cs-text3 mb-2">Original author</div>
           <div className="bg-cs-bg3 border border-cs-border rounded-md p-3">
             <a href="https://www.credly.com/users/eskintan/badges#credly" target="_blank" rel="noreferrer" className="font-medium text-cs-text text-sm hover:text-cs-cyan transition-colors">3sk1nt4n</a>
-            <div className="text-xs text-cs-text3 mt-0.5">CyberSentinel AI v3.0 | Agentic</div>
+            <div className="text-xs text-cs-text3 mt-0.5">Author of CyberSentinel AI, the base platform</div>
           </div>
         </div>
       </aside>

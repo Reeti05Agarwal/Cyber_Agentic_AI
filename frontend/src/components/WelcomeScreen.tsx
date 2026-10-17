@@ -18,11 +18,11 @@ const QUICK_ACTIONS = [
 export default function WelcomeScreen({ toolCount, onSend, onOpenScan }: WelcomeScreenProps) {
   return (
     <div className="py-12 animate-slide-in max-w-2xl mx-auto">
-      <h1 className="text-2xl font-semibold text-cs-text mb-1">CyberSentinel AI</h1>
+      <h1 className="text-2xl font-semibold text-cs-text mb-1">Cyber Agentic AI</h1>
       <p className="text-sm text-cs-text2 mb-1">
         Security assistant with {toolCount} tools: scanners, threat intelligence, SIEM queries and a knowledge base.
       </p>
-      <p className="text-xs text-cs-text3 mb-8">powered by SolventCyber.com</p>
+      <p className="text-xs text-cs-text3 mb-8">Built on the open-source CyberSentinel AI platform.</p>
       <div className="text-xs font-medium text-cs-text3 mb-2">Start with</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {QUICK_ACTIONS.map((b, i) => (

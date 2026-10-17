@@ -21,10 +21,10 @@ export default function Header({ providers, provider, serviceHealth, onProviderC
   return (
     <header className="col-span-full bg-cs-bg2 border-b border-cs-border flex items-center justify-between px-4 z-10">
       <div className="flex items-center gap-2.5 cursor-pointer select-none" onClick={onNewChat}>
-        <div className="w-7 h-7 rounded-md border border-cs-border2 bg-cs-bg3 flex items-center justify-center text-xs font-semibold text-cs-text">CS</div>
+        <div className="w-7 h-7 rounded-md border border-cs-border2 bg-cs-bg3 flex items-center justify-center text-xs font-semibold text-cs-text">CA</div>
         <div className="leading-tight">
-          <div className="font-semibold text-sm text-cs-text">CyberSentinel AI</div>
-          <div className="text-[0.7rem] text-cs-text3">powered by SolventCyber.com</div>
+          <div className="font-semibold text-sm text-cs-text">Cyber Agentic AI</div>
+          <div className="text-[0.7rem] text-cs-text3">built on CyberSentinel AI (open source)</div>
         </div>
       </div>
       <div className="flex items-center gap-2">

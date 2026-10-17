@@ -2,63 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
-
 :root {
-  --bg: #0a0e17;
-  --bg2: #0f1520;
-  --bg3: #151c2c;
-  --border: #1e2a40;
-  --cyan: #00f0ff;
-  --purple: #a855f7;
+  --bg: #101214;
+  --bg2: #16181b;
+  --bg3: #1c1f23;
+  --border: #2b2f35;
+  --text: #e4e6e9;
+  --accent: #7aa7d4;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-::selection { background: var(--cyan); color: var(--bg); }
+::selection { background: rgba(122, 167, 212, 0.35); color: var(--text); }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: #2a3a55; border-radius: 3px; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2b2f35; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3f46; }
 
 body {
   background: var(--bg);
-  color: #c8d6e5;
-  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+button:focus-visible, a:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Animations */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-@keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.3; } 30% { transform: translateY(-6px); opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes typing { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 0.9; } }
 
-.animate-slide-in { animation: slideIn 0.3s ease-out; }
+.animate-slide-in { animation: slideIn 0.15s ease-out; }
 
-/* Code blocks inside chat */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Chat message content */
+.chat-content { color: var(--text); }
+.chat-content p { margin: 0.4em 0; }
+
 .chat-content pre {
-  background: #0a0e17;
-  border: 1px solid #1e2a40;
-  border-radius: 8px;
+  background: #121417;
+  border: 1px solid #2b2f35;
+  border-radius: 6px;
   padding: 12px;
   overflow-x: auto;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82rem;
-  color: #00f0ff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #d3d6da;
   margin: 8px 0;
 }
 
 .chat-content code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82rem;
-  background: #0a0e17;
-  padding: 2px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  background: #24282d;
+  padding: 1px 5px;
   border-radius: 4px;
-  color: #00f0ff;
+  color: #d3d6da;
 }
 
-.chat-content strong { color: #e0e8f0; }
-.chat-content a { color: #00f0ff; text-decoration: underline; }
+.chat-content pre code { background: none; padding: 0; }
+
+.chat-content strong { color: #f1f2f4; font-weight: 600; }
+.chat-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 /* Ensure text is selectable */
 .chat-content, .chat-content * {

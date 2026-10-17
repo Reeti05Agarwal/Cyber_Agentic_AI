@@ -8,25 +8,25 @@ interface CveDetailModalProps {
 export default function CveDetailModal({ cve, onClose }: CveDetailModalProps) {
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-cs-bg2 border border-cs-border rounded-2xl w-full max-w-lg p-6 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div className="bg-cs-bg2 border border-cs-border rounded-lg w-full max-w-lg p-6 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-cs-red font-mono">{cve.cve_id}</h2>
-          <button onClick={onClose} className="text-cs-text3 hover:text-cs-red">✕</button>
+          <h2 className="text-base font-semibold font-mono">{cve.cve_id}</h2>
+          <button onClick={onClose} className="text-xs text-cs-text2 border border-cs-border rounded px-2 py-0.5 hover:text-cs-text hover:border-cs-border2">Close</button>
         </div>
         <div className="flex gap-2 mb-4">
-          <span className={`text-sm font-mono px-2 py-1 rounded font-bold ${cve.cvss_score >= 9 ? 'bg-cs-red/20 text-cs-red' : cve.cvss_score >= 7 ? 'bg-cs-orange/20 text-cs-orange' : 'bg-cs-cyan/20 text-cs-cyan'}`}>
+          <span className="text-xs px-2 py-1 rounded border border-cs-border text-cs-text2 tabular-nums">
             CVSS {cve.cvss_score}
           </span>
-          <span className={`text-sm font-mono px-2 py-1 rounded ${cve.cvss_score >= 9 ? 'bg-cs-red/10 text-cs-red' : cve.cvss_score >= 7 ? 'bg-cs-orange/10 text-cs-orange' : cve.cvss_score >= 4 ? 'bg-cs-cyan/10 text-cs-cyan' : 'bg-cs-green/10 text-cs-green'}`}>
-            {cve.cvss_score >= 9 ? 'CRITICAL' : cve.cvss_score >= 7 ? 'HIGH' : cve.cvss_score >= 4 ? 'MEDIUM' : 'LOW'}
+          <span className={`text-xs px-2 py-1 rounded border border-cs-border font-medium ${cve.cvss_score >= 9 ? 'text-cs-red' : cve.cvss_score >= 7 ? 'text-cs-orange' : cve.cvss_score >= 4 ? 'text-cs-yellow' : 'text-cs-green'}`}>
+            {cve.cvss_score >= 9 ? 'Critical' : cve.cvss_score >= 7 ? 'High' : cve.cvss_score >= 4 ? 'Medium' : 'Low'}
           </span>
         </div>
         <div className="mb-4">
-          <div className="text-xs text-cs-text3 uppercase mb-1 font-semibold">Description</div>
+          <div className="text-xs text-cs-text3 mb-1 font-medium">Description</div>
           <div className="text-sm text-cs-text leading-relaxed">{cve.description || 'No description available.'}</div>
         </div>
         <div className="mb-4">
-          <div className="text-xs text-cs-text3 uppercase mb-1 font-semibold">🛡️ How to Protect</div>
+          <div className="text-xs text-cs-text3 mb-1 font-medium">How to protect</div>
           <div className="text-sm text-cs-text2 leading-relaxed space-y-1">
             {cve.cvss_score >= 9 ? (
               <>
@@ -52,8 +52,8 @@ export default function CveDetailModal({ cve, onClose }: CveDetailModalProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          <a href={`https://nvd.nist.gov/vuln/detail/${cve.cve_id}`} target="_blank" className="flex-1 text-center bg-cs-cyan/10 border border-cs-cyan/30 text-cs-cyan py-2 rounded-lg text-sm font-mono hover:bg-cs-cyan/20">📋 NVD Detail</a>
-          <a href={`https://www.cvedetails.com/cve/${cve.cve_id}`} target="_blank" className="flex-1 text-center bg-cs-orange/10 border border-cs-orange/30 text-cs-orange py-2 rounded-lg text-sm font-mono hover:bg-cs-orange/20">🔍 CVE Details</a>
+          <a href={`https://nvd.nist.gov/vuln/detail/${cve.cve_id}`} target="_blank" rel="noreferrer" className="flex-1 text-center bg-cs-bg3 border border-cs-border text-cs-text2 py-2 rounded-md text-sm hover:text-cs-text hover:border-cs-border2">NVD entry</a>
+          <a href={`https://www.cvedetails.com/cve/${cve.cve_id}`} target="_blank" rel="noreferrer" className="flex-1 text-center bg-cs-bg3 border border-cs-border text-cs-text2 py-2 rounded-md text-sm hover:text-cs-text hover:border-cs-border2">CVE Details</a>
         </div>
       </div>
     </div>

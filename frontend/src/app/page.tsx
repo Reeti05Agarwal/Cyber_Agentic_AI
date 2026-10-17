@@ -98,12 +98,12 @@ export default function Dashboard() {
   const pickTool = useCallback(async (n: string) => {
     if (n === 'Splunk SIEM' && !splunkOk) {
       setActiveTool(null); setQueries([])
-      setMsgs(p => [...p, { role: 'assistant', content: `## 🔍 Splunk SIEM - Not Connected\n\nSplunk is not running yet. Start it with Docker and the service panel will show it as 🟢 **ON** once connected.\n\nThen try: *"Check Splunk health"* or *"Query Splunk for failed logins"*` }])
+      setMsgs(p => [...p, { role: 'assistant', content: `## Splunk SIEM: not connected\n\nSplunk is not running yet. Start it with Docker and the service panel will show it as **Running** once connected.\n\nThen try: *"Check Splunk health"* or *"Query Splunk for failed logins"*` }])
       return
     }
     if (n === 'Wazuh SIEM' && !wazuhOk) {
       setActiveTool(null); setQueries([])
-      setMsgs(p => [...p, { role: 'assistant', content: `## 🛡️ Wazuh SIEM - Not Connected\n\nWazuh is not running yet. Start it with Docker and the service panel will show it as 🟢 **ON** once connected.\n\nThen try: *"Check Wazuh health"* or *"Query Wazuh alerts"*` }])
+      setMsgs(p => [...p, { role: 'assistant', content: `## Wazuh SIEM: not connected\n\nWazuh is not running yet. Start it with Docker and the service panel will show it as **Running** once connected.\n\nThen try: *"Check Wazuh health"* or *"Query Wazuh alerts"*` }])
       return
     }
     setActiveTool(n); setMobSidebar(false)
@@ -120,9 +120,9 @@ export default function Dashboard() {
     setUploading(true)
     try {
       const r = await uploadToKB(file, 'user_docs')
-      setMsgs(p => [...p, { role: 'assistant', content: `📁 **File uploaded:** ${file.name}\n${r.success ? `✅ Added ${r.chunks_added} chunks to knowledge base` : `❌ Error: ${r.error}`}` }])
+      setMsgs(p => [...p, { role: 'assistant', content: `**File uploaded:** ${file.name}\n${r.success ? `Added ${r.chunks_added} chunks to the knowledge base.` : `Error: ${r.error}`}` }])
       getKBStats().then(setKbStats).catch(() => {})
-    } catch { setMsgs(p => [...p, { role: 'assistant', content: `❌ Upload failed for ${file.name}` }]) }
+    } catch { setMsgs(p => [...p, { role: 'assistant', content: `Upload failed for ${file.name}` }]) }
     setUploading(false); if (fileRef.current) fileRef.current.value = ''
   }
 
@@ -146,13 +146,13 @@ export default function Dashboard() {
     try {
       for await (const ch of streamChat(nh, provider, undefined, abortCtrl.signal)) {
         if (abortRef.current || genRef.current !== thisGen) { full = ''; break }
-        if (ch.error) { full = `⚠️ **Error:** ${ch.error}`; break }
+        if (ch.error) { full = `**Error:** ${ch.error}`; break }
         if (ch.token) { full += ch.token; setStreamText(full) }
         if (ch.done) break
       }
     } catch (e: any) {
       if (e.name === 'AbortError' || abortRef.current || genRef.current !== thisGen) { clearInterval(tmrId); setStreamTimer(0); setStreamText(''); setStreaming(false); abortRef.current = false; return }
-      full = `⚠️ **Error:** ${e.message}`
+      full = `**Error:** ${e.message}`
     }
     clearInterval(tmrId); setStreamTimer(0)
     if (abortRef.current || genRef.current !== thisGen) { setStreamText(''); setStreaming(false); abortRef.current = false; return }
@@ -182,7 +182,7 @@ export default function Dashboard() {
   const stopStream = () => { abortRef.current = true; abortCtrlRef.current?.abort(); genRef.current++ }
 
   const exportMd = () => {
-    const md = msgs.map(m => `## ${m.role === 'user' ? '👤 You' : '🛡️ CyberSentinel'}\n\n${m.content}`).join('\n\n---\n\n')
+    const md = msgs.map(m => `## ${m.role === 'user' ? 'You' : 'CyberSentinel'}\n\n${m.content}`).join('\n\n---\n\n')
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([`# CyberSentinel Export\n\n${md}`], { type: 'text/markdown' })); a.download = `cybersentinel-${Date.now()}.md`; a.click()
   }
 
@@ -204,7 +204,7 @@ export default function Dashboard() {
   }
 
   const handleScanResult = (userMsg: string, resultMsg: string, badge: string) => {
-    setMsgs(p => [...p, { role: 'user', content: userMsg }, { role: 'assistant', content: resultMsg, badges: [{ name: badge, cls: 'bg-cs-red/20 text-cs-red border-cs-red/20' }] }])
+    setMsgs(p => [...p, { role: 'user', content: userMsg }, { role: 'assistant', content: resultMsg, badges: [{ name: badge, cls: 'bg-cs-bg3 text-cs-text2 border-cs-border' }] }])
   }
 
   const openThreatPanel = async (type: string) => {
@@ -246,14 +246,13 @@ export default function Dashboard() {
           {activeTool && queries.length > 0 && (
             <div className="mb-2 animate-slide-in">
               <div className="flex items-center justify-between mb-3">
-                <div className="text-sm font-bold text-cs-cyan">🔧 {activeTool}</div>
-                <button onClick={() => { setActiveTool(null); setQueries([]) }} className="w-6 h-6 rounded border border-cs-border text-cs-text3 text-xs flex items-center justify-center hover:border-cs-red hover:text-cs-red">✕</button>
+                <div className="text-sm font-semibold text-cs-text">{activeTool}</div>
+                <button onClick={() => { setActiveTool(null); setQueries([]) }} className="h-6 px-2 rounded border border-cs-border text-cs-text3 text-xs flex items-center justify-center hover:text-cs-text hover:border-cs-border2">Close</button>
               </div>
               {queries.map((q, i) => (
                 <div key={i} className="flex items-center gap-2 my-1.5">
-                  <span className="font-mono text-[0.6rem] text-cs-text3 w-5 shrink-0">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="flex-1 bg-cs-bg3 border border-cs-border rounded-lg px-3 py-2 text-sm text-cs-text cursor-pointer hover:border-cs-cyan transition-all" onClick={() => send(q)}>{q}</div>
-                  <button onClick={() => send(q)} className="w-8 h-8 rounded-lg bg-cs-bg3 border border-cs-border text-cs-cyan text-sm flex items-center justify-center hover:bg-cs-cyan/10 shrink-0">→</button>
+                                    <div className="flex-1 bg-cs-bg2 border border-cs-border rounded-md px-3 py-2 text-sm text-cs-text cursor-pointer hover:border-cs-border2 hover:bg-cs-bg3 transition-colors" onClick={() => send(q)}>{q}</div>
+                  
                 </div>
               ))}
             </div>
@@ -262,39 +261,39 @@ export default function Dashboard() {
 
         {/* ACTION BAR */}
         <div className="max-w-4xl mx-auto w-full flex items-center gap-2 pt-1 flex-wrap">
-          <button onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-1.5 bg-cs-bg3 border border-cs-border text-cs-text2 text-[0.65rem] px-3 py-1.5 rounded-lg hover:border-cs-cyan hover:text-cs-cyan transition-colors font-mono">📜 History</button>
-          {msgs.length > 0 && <button onClick={exportPdf} className="flex items-center gap-1.5 bg-cs-bg3 border border-cs-border text-cs-text2 text-[0.65rem] px-3 py-1.5 rounded-lg hover:border-cs-red hover:text-cs-red transition-colors font-mono">📕 Export PDF</button>}
-          {msgs.length > 0 && <button onClick={exportMd} className="flex items-center gap-1.5 bg-cs-bg3 border border-cs-border text-cs-text2 text-[0.65rem] px-3 py-1.5 rounded-lg hover:border-cs-green hover:text-cs-green transition-colors font-mono">📄 Export .md</button>}
-          <button onClick={() => fileRef.current?.click()} className="flex items-center gap-1.5 bg-cs-bg3 border border-cs-border text-cs-text2 text-[0.65rem] px-3 py-1.5 rounded-lg hover:border-cs-orange hover:text-cs-orange transition-colors font-mono">{uploading ? '⏳ Uploading...' : '📁 Upload'}</button>
+          <button onClick={() => setShowHistory(!showHistory)} className="h-8 flex items-center bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium px-3 rounded-md hover:text-cs-text hover:border-cs-border2 transition-colors">History</button>
+          {msgs.length > 0 && <button onClick={exportPdf} className="h-8 flex items-center bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium px-3 rounded-md hover:text-cs-text hover:border-cs-border2 transition-colors">Export PDF</button>}
+          {msgs.length > 0 && <button onClick={exportMd} className="h-8 flex items-center bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium px-3 rounded-md hover:text-cs-text hover:border-cs-border2 transition-colors">Export Markdown</button>}
+          <button onClick={() => fileRef.current?.click()} className="h-8 flex items-center bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium px-3 rounded-md hover:text-cs-text hover:border-cs-border2 transition-colors">{uploading ? 'Uploading...' : 'Upload file'}</button>
           <input ref={fileRef} type="file" className="hidden" accept=".txt,.md,.csv,.json,.log,.pcap,.xml,.yaml,.yml,.pdf" onChange={handleUpload} />
-          <button onClick={() => setShowSettings(true)} className="flex items-center gap-1.5 bg-cs-bg3 border border-cs-border text-cs-text2 text-[0.65rem] px-3 py-1.5 rounded-lg hover:border-cs-purple hover:text-cs-purple transition-colors font-mono">⚙️ Settings</button>
+          <button onClick={() => setShowSettings(true)} className="h-8 flex items-center bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium px-3 rounded-md hover:text-cs-text hover:border-cs-border2 transition-colors">Settings</button>
           <div className="flex-1" />
-          <button onClick={newChat} className="flex items-center gap-1.5 bg-gradient-to-r from-cs-cyan to-cs-purple text-cs-bg text-[0.65rem] px-4 py-1.5 rounded-lg font-bold font-mono hover:opacity-90 transition-opacity shadow-[0_0_10px_rgba(0,240,255,0.15)]">✦ New Session</button>
+          <button onClick={newChat} className="h-8 flex items-center bg-cs-cyan text-cs-bg text-xs font-semibold px-3 rounded-md hover:bg-cs-cyan/90 transition-colors">New session</button>
         </div>
 
         {/* INPUT */}
         <div className="max-w-4xl mx-auto w-full pt-1 pb-2">
           <div className="flex gap-2 items-end">
-            {sandboxOk && <button onClick={() => setShowScan(true)} className="w-12 h-12 rounded-xl bg-gradient-to-br from-cs-red to-cs-orange text-white flex items-center justify-center text-lg font-bold shrink-0 hover:scale-105 transition-transform shadow-[0_0_15px_rgba(255,51,85,0.25)]" title="Live Security Scan">🎯</button>}
-            <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKey} placeholder={streaming ? 'Streaming...' : 'Ask CyberSentinel anything...'} disabled={streaming} rows={1} className="flex-1 bg-cs-bg3 border border-cs-border text-cs-text rounded-xl px-4 py-3 text-sm outline-none resize-none min-h-[48px] max-h-[160px] focus:border-cs-cyan placeholder:text-cs-text3 disabled:opacity-50 font-sans" />
-            <button onClick={() => send()} disabled={streaming} className="w-12 h-12 rounded-xl bg-gradient-to-br from-cs-cyan to-cs-green text-cs-bg flex items-center justify-center text-lg font-bold shrink-0 hover:scale-105 transition-transform shadow-[0_0_15px_rgba(0,240,255,0.2)] disabled:opacity-50">→</button>
+            {sandboxOk && <button onClick={() => setShowScan(true)} className="h-12 px-3 rounded-lg bg-cs-bg3 border border-cs-border text-cs-text2 text-xs font-medium shrink-0 hover:text-cs-text hover:border-cs-border2 transition-colors" title="Live security scan">Scan</button>}
+            <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKey} placeholder={streaming ? 'Streaming...' : 'Ask CyberSentinel anything...'} disabled={streaming} rows={1} className="flex-1 bg-cs-bg2 border border-cs-border text-cs-text rounded-lg px-4 py-3 text-sm outline-none resize-none min-h-[48px] max-h-[160px] focus:border-cs-border2 placeholder:text-cs-text3 disabled:opacity-50 font-sans" />
+            <button onClick={() => send()} disabled={streaming} className="h-12 px-4 rounded-lg bg-cs-cyan text-cs-bg text-sm font-semibold shrink-0 hover:bg-cs-cyan/90 transition-colors disabled:opacity-50">Send</button>
           </div>
-          <div className="text-[0.55rem] text-cs-text3 font-mono mt-1.5 px-1">
-            ⌘ Enter to send · {tools.length} tools · {provider === 'ollama' ? '🧠' : provider === 'claude' ? '🟣' : provider === 'openai' ? '🟢' : '🌐'} {providers.find(p => p.id === provider)?.model || provider} · {provider === 'ollama' ? '🔒 Local Mode' : '☁️ Cloud Mode'}
+          <div className="text-xs text-cs-text3 mt-1.5 px-1">
+            Enter to send, Shift+Enter for a new line · {tools.length} tools · {providers.find(p => p.id === provider)?.model || provider} · {provider === 'ollama' ? 'local model' : 'cloud model'}
           </div>
         </div>
       </main>
 
       {/* RIGHT PANEL */}
-      <aside className="hidden xl:block bg-gradient-to-b from-cs-bg2 to-[#0a0e1a] border-l border-cs-border overflow-y-auto p-4">
+      <aside className="hidden xl:block bg-cs-bg2 border-l border-cs-border overflow-y-auto p-4">
         {/* Arsenal Stats */}
         <div className="mb-4">
-          <div className="text-[0.7rem] uppercase tracking-widest text-cs-text3 font-semibold mb-2">/ Arsenal Stats</div>
+          <div className="text-xs font-medium text-cs-text3 mb-2">Overview</div>
           <div className="grid grid-cols-2 gap-2">
-            {[{ n: '33', l: 'TOOLS', c: 'text-cs-cyan', bc: 'border-cs-cyan/20' }, { n: '6', l: 'CATEGORIES', c: 'text-cs-purple', bc: 'border-cs-purple/20' }, { n: '11', l: 'SCANNERS', c: 'text-cs-green', bc: 'border-cs-green/20' }, { n: '5', l: 'INTEL APIS', c: 'text-cs-orange', bc: 'border-cs-orange/20' }].map((s, i) => (
-              <div key={i} className={`bg-cs-bg3 border ${s.bc} rounded-lg p-3 text-center`}>
-                <div className={`text-xl font-extrabold font-mono ${s.c}`}>{s.n}</div>
-                <div className="text-[0.5rem] text-cs-text3 uppercase tracking-wider mt-0.5">{s.l}</div>
+            {[{ n: '33', l: 'Tools', c: 'text-cs-text', bc: 'border-cs-border' }, { n: '6', l: 'Categories', c: 'text-cs-text', bc: 'border-cs-border' }, { n: '11', l: 'Scanners', c: 'text-cs-text', bc: 'border-cs-border' }, { n: '5', l: 'Intel APIs', c: 'text-cs-text', bc: 'border-cs-border' }].map((s, i) => (
+              <div key={i} className={`bg-cs-bg3 border ${s.bc} rounded-md px-3 py-2`}>
+                <div className={`text-lg font-semibold tabular-nums ${s.c}`}>{s.n}</div>
+                <div className="text-xs text-cs-text3">{s.l}</div>
               </div>
             ))}
           </div>
@@ -303,90 +302,89 @@ export default function Dashboard() {
         {/* Threat Intel */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[0.75rem] uppercase tracking-widest text-cs-text3 font-semibold">/ Live Threat Intel</div>
-            <button onClick={() => triggerThreatPull().then(() => { setTimeout(() => { getThreatFeedStatus().then(setThreatData); getThreatSummary().then(d => { if (d?.stats) setThreatSummary(d) }) }, 10000) })} className="text-[0.6rem] bg-cs-red/20 text-cs-red px-2.5 py-1 rounded font-mono hover:bg-cs-red/30">Refresh</button>
+            <div className="text-xs font-medium text-cs-text3">Threat intel</div>
+            <button onClick={() => triggerThreatPull().then(() => { setTimeout(() => { getThreatFeedStatus().then(setThreatData); getThreatSummary().then(d => { if (d?.stats) setThreatSummary(d) }) }, 10000) })} className="text-xs text-cs-text2 border border-cs-border px-2 py-0.5 rounded hover:text-cs-text hover:border-cs-border2">Refresh</button>
           </div>
           {threatSummary?.stats ? (
             <>
               <div className="grid grid-cols-3 gap-1.5 mb-3">
-                {[{ n: threatSummary.stats.critical_cves || 0, l: 'CRITICAL', c: 'text-cs-red', bc: 'hover:border-cs-red/50', t: 'critical' }, { n: threatSummary.stats.exploited_cves || 0, l: 'EXPLOITED', c: 'text-cs-orange', bc: 'hover:border-cs-orange/50', t: 'exploited' }, { n: threatSummary.stats.total_iocs || 0, l: 'IOCs', c: 'text-cs-cyan', bc: 'hover:border-cs-cyan/50', t: 'iocs' }].map((s, i) => (
-                  <div key={i} onClick={() => openThreatPanel(s.t)} className={`bg-cs-bg3 border border-cs-border/30 rounded-lg p-2.5 text-center cursor-pointer transition-all ${s.bc} hover:scale-[1.02]`}>
-                    <div className={`text-xl font-extrabold font-mono ${s.c}`}>{s.n}</div>
-                    <div className="text-[0.55rem] text-cs-text3 uppercase tracking-wider">{s.l}</div>
+                {[{ n: threatSummary.stats.critical_cves || 0, l: 'Critical', c: 'text-cs-red', bc: 'hover:border-cs-border2', t: 'critical' }, { n: threatSummary.stats.exploited_cves || 0, l: 'Exploited', c: 'text-cs-orange', bc: 'hover:border-cs-border2', t: 'exploited' }, { n: threatSummary.stats.total_iocs || 0, l: 'IOCs', c: 'text-cs-text', bc: 'hover:border-cs-border2', t: 'iocs' }].map((s, i) => (
+                  <div key={i} onClick={() => openThreatPanel(s.t)} className={`bg-cs-bg3 border border-cs-border rounded-md px-2.5 py-2 cursor-pointer transition-colors ${s.bc}`}>
+                    <div className={`text-lg font-semibold tabular-nums ${s.c}`}>{s.n}</div>
+                    <div className="text-xs text-cs-text3">{s.l}</div>
                   </div>
                 ))}
               </div>
               <div className="space-y-1.5 mb-3">
                 {(threatSummary.top_cves || []).slice(0, 5).map((c: any, i: number) => (
-                  <div key={i} onClick={() => setCveDetail(c)} className="block bg-cs-bg border border-cs-border/30 rounded-lg p-2.5 hover:border-cs-red/50 transition-colors cursor-pointer">
+                  <div key={i} onClick={() => setCveDetail(c)} className="block bg-cs-bg border border-cs-border rounded-md p-2.5 hover:border-cs-border2 transition-colors cursor-pointer">
                     <div className="flex items-center justify-between">
-                      <span className="text-cs-red font-mono text-[0.7rem] font-bold">{c.cve_id}</span>
-                      <span className={`text-[0.6rem] font-mono px-1.5 py-0.5 rounded font-bold ${c.cvss_score >= 9 ? 'bg-cs-red/20 text-cs-red' : c.cvss_score >= 7 ? 'bg-cs-orange/20 text-cs-orange' : 'bg-cs-cyan/20 text-cs-cyan'}`}>{c.cvss_score}</span>
+                      <span className="text-cs-text font-mono text-xs font-medium">{c.cve_id}</span>
+                      <span className={`text-xs tabular-nums font-medium ${c.cvss_score >= 9 ? 'text-cs-red' : c.cvss_score >= 7 ? 'text-cs-orange' : 'text-cs-text2'}`}>{c.cvss_score}</span>
                     </div>
-                    <div className="text-[0.65rem] text-cs-text3 mt-1 line-clamp-2 leading-relaxed">{c.description?.slice(0, 120)}...</div>
+                    <div className="text-xs text-cs-text3 mt-1 line-clamp-2 leading-relaxed">{c.description?.slice(0, 120)}...</div>
                   </div>
                 ))}
               </div>
             </>
           ) : (
-            <div className="bg-cs-bg3 border border-cs-border/50 rounded-lg p-4 text-center">
-              <div className="text-cs-orange text-sm animate-pulse mb-1">⏳</div>
-              <div className="text-[0.7rem] text-cs-text3">Pulling live threat intel...</div>
+            <div className="bg-cs-bg3 border border-cs-border rounded-md p-3">
+              <div className="text-xs text-cs-text3">Loading threat intel...</div>
             </div>
           )}
         </div>
 
         {/* Services */}
         <div className="mb-4">
-          <div className="text-[0.7rem] uppercase tracking-widest text-cs-text3 font-semibold mb-2">/ Services</div>
-          <div className="bg-cs-bg3 border border-cs-border/50 rounded-lg p-3 space-y-2">
+          <div className="text-xs font-medium text-cs-text3 mb-2">Services</div>
+          <div className="bg-cs-bg3 border border-cs-border rounded-md p-3 space-y-2">
             {[
-              { name: 'Local AI (Ollama)', icon: '🔒', id: 'ollama', ok: serviceHealth?.services?.ollama?.status === 'connected' },
-              { name: 'Neo4j Graph', icon: '🕸️', id: 'neo4j', ok: serviceHealth?.services?.neo4j?.status === 'connected' },
-              { name: 'ChromaDB RAG', icon: '📚', id: 'chromadb', ok: kbStats?.status === 'connected' },
-              { name: 'Kali Sandbox', icon: '🐧', id: 'sandbox', ok: sandboxOk },
-              { name: 'ELK Stack', icon: '📊', id: 'elk', ok: elkOk },
-              { name: 'Splunk', icon: '🔍', id: 'splunk', ok: splunkOk },
-              { name: 'Wazuh', icon: '🛡️', id: 'wazuh', ok: wazuhOk },
+              { name: 'Ollama (local AI)', icon: '', id: 'ollama', ok: serviceHealth?.services?.ollama?.status === 'connected' },
+              { name: 'Neo4j graph', icon: '', id: 'neo4j', ok: serviceHealth?.services?.neo4j?.status === 'connected' },
+              { name: 'ChromaDB knowledge base', icon: '', id: 'chromadb', ok: kbStats?.status === 'connected' },
+              { name: 'Kali sandbox', icon: '', id: 'sandbox', ok: sandboxOk },
+              { name: 'Elasticsearch SIEM', icon: '', id: 'elk', ok: elkOk },
+              { name: 'Splunk', icon: '', id: 'splunk', ok: splunkOk },
+              { name: 'Wazuh', icon: '', id: 'wazuh', ok: wazuhOk },
             ].map((s, i) => (
-              <div key={i} className="flex items-center justify-between text-[0.75rem]">
-                <span className="text-cs-text2 flex items-center gap-1.5"><span>{s.icon}</span>{s.name}</span>
-                <span className={`font-mono text-[0.6rem] flex items-center gap-1 px-2 py-0.5 rounded-full ${s.ok ? 'text-cs-green bg-cs-green/10' : 'text-cs-red bg-cs-red/10'}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? 'bg-cs-green shadow-[0_0_4px_#00ff88]' : 'bg-cs-red'}`} />
-                  {s.ok ? 'ON' : 'OFF'}
+              <div key={i} className="flex items-center justify-between text-xs">
+                <span className="text-cs-text2">{s.name}</span>
+                <span className={`flex items-center gap-1.5 ${s.ok ? 'text-cs-text2' : 'text-cs-text3'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? 'bg-cs-green' : 'bg-cs-border2'}`} />
+                  {s.ok ? 'Running' : 'Off'}
                 </span>
               </div>
             ))}
-            {elkOk && <button onClick={async (e) => { const btn = e.currentTarget; btn.textContent = '⏳ Seeding...'; btn.disabled = true; try { await elkSeedSampleData(); btn.textContent = '✅ Seeded!' } catch { btn.textContent = '❌ Failed' } setTimeout(() => { btn.textContent = '📊 Seed ELK with 500+ Events'; btn.disabled = false }, 3000) }} className="w-full mt-1 bg-gradient-to-r from-cs-green/20 to-cs-cyan/20 border border-cs-green/30 text-cs-green text-[0.55rem] py-1.5 rounded-lg font-mono hover:from-cs-green/30 hover:to-cs-cyan/30 disabled:opacity-50">📊 Seed ELK with 500+ Events</button>}
+            {elkOk && <button onClick={async (e) => { const btn = e.currentTarget; btn.textContent = 'Seeding...'; btn.disabled = true; try { await elkSeedSampleData(); btn.textContent = 'Seeded' } catch { btn.textContent = 'Failed' } setTimeout(() => { btn.textContent = 'Load sample SIEM events'; btn.disabled = false }, 3000) }} className="w-full mt-2 border border-cs-border text-cs-text2 text-xs py-1.5 rounded-md hover:text-cs-text hover:border-cs-border2 disabled:opacity-50">Load sample SIEM events</button>}
           </div>
         </div>
 
         {/* Knowledge Base */}
         <div className="mb-4">
-          <div className="text-[0.7rem] uppercase tracking-widest text-cs-text3 font-semibold mb-2">/ Knowledge Base</div>
-          <div className="bg-cs-bg3 border border-cs-border/50 rounded-lg p-3">
+          <div className="text-xs font-medium text-cs-text3 mb-2">Knowledge base</div>
+          <div className="bg-cs-bg3 border border-cs-border rounded-md p-3">
             {kbStats?.status === 'connected' ? (
               <div className="space-y-1.5">
                 {Object.entries(kbStats.collections || {}).filter(([, info]: any) => info.documents > 0).map(([n, info]: any) => (
-                  <div key={n} className="flex items-center justify-between text-[0.7rem]">
+                  <div key={n} className="flex items-center justify-between text-xs">
                     <span className="text-cs-text2 truncate capitalize">{n.replace(/_/g, ' ')}</span>
-                    <span className="text-cs-cyan font-mono text-[0.55rem] bg-cs-cyan/10 px-1.5 py-0.5 rounded">{info.documents}</span>
+                    <span className="text-cs-text2 tabular-nums">{info.documents}</span>
                   </div>
                 ))}
-                <button onClick={() => seedKB().then(() => getKBStats().then(setKbStats))} className="mt-2 w-full bg-gradient-to-r from-cs-purple/20 to-cs-cyan/20 border border-cs-purple/30 text-cs-purple text-[0.6rem] py-1.5 rounded-lg font-mono hover:from-cs-purple/30 hover:to-cs-cyan/30">🧠 Seed Knowledge</button>
+                <button onClick={() => seedKB().then(() => getKBStats().then(setKbStats))} className="mt-2 w-full border border-cs-border text-cs-text2 text-xs py-1.5 rounded-md hover:text-cs-text hover:border-cs-border2">Load seed knowledge</button>
               </div>
             ) : (
-              <div className="text-cs-text3 text-[0.7rem] text-center py-2">Connecting to ChromaDB...</div>
+              <div className="text-cs-text3 text-xs">Connecting to ChromaDB...</div>
             )}
           </div>
         </div>
 
         {/* Creator */}
         <div>
-          <div className="text-[0.7rem] uppercase tracking-widest text-cs-text3 font-semibold mb-2">/ Creator</div>
-          <div className="bg-gradient-to-br from-cs-orange/10 to-cs-purple/10 border border-cs-orange/20 rounded-lg p-3 text-center">
-            <a href="https://www.credly.com/users/eskintan/badges#credly" target="_blank" className="font-bold text-cs-orange text-sm hover:text-cs-cyan transition-colors">🏅 3sk1nt4n</a>
-            <div className="text-[0.5rem] text-cs-text3 font-mono mt-1">CyberSentinel AI v3.0 | Agentic</div>
+          <div className="text-xs font-medium text-cs-text3 mb-2">Original author</div>
+          <div className="bg-cs-bg3 border border-cs-border rounded-md p-3">
+            <a href="https://www.credly.com/users/eskintan/badges#credly" target="_blank" rel="noreferrer" className="font-medium text-cs-text text-sm hover:text-cs-cyan transition-colors">3sk1nt4n</a>
+            <div className="text-xs text-cs-text3 mt-0.5">CyberSentinel AI v3.0 | Agentic</div>
           </div>
         </div>
       </aside>
@@ -400,25 +398,25 @@ export default function Dashboard() {
       {/* Threat Panel Modal */}
       {threatPanel && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setThreatPanel(null)}>
-          <div className="bg-cs-bg2 border border-cs-border rounded-2xl w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-cs-bg2 border border-cs-border rounded-lg w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">{threatPanel === 'critical' ? '🔴 Critical CVEs (CVSS ≥ 9.0)' : threatPanel === 'exploited' ? '🟠 CISA KEV - Actively Exploited' : '🔵 IOCs'}</h2>
-              <button onClick={() => setThreatPanel(null)} className="text-cs-text3 hover:text-cs-red text-lg">✕</button>
+              <h2 className="text-base font-semibold">{threatPanel === 'critical' ? 'Critical CVEs (CVSS 9.0 and above)' : threatPanel === 'exploited' ? 'CISA KEV: actively exploited' : 'Indicators of compromise'}</h2>
+              <button onClick={() => setThreatPanel(null)} className="text-xs text-cs-text2 border border-cs-border rounded px-2 py-0.5 hover:text-cs-text">Close</button>
             </div>
             {threatPanelLoading && threatPanelData.length === 0 ? (
-              <div className="text-center py-8"><div className="text-2xl mb-2 animate-pulse">⏳</div><div className="text-sm text-cs-text3">Loading...</div></div>
+              <div className="py-8 text-sm text-cs-text3">Loading...</div>
             ) : threatPanelData.length === 0 ? (
-              <div className="text-center py-8"><div className="text-2xl mb-2">📭</div><div className="text-sm text-cs-text3">No data available. Click Refresh and try again.</div></div>
+              <div className="py-8 text-sm text-cs-text3">No data yet. Use Refresh in the side panel and try again.</div>
             ) : (
               <div className="space-y-2">
                 {threatPanelData.map((item: any, i: number) => (
-                  <div key={i} onClick={() => item.cve_id && (setThreatPanel(null), setCveDetail(item))} className="bg-cs-bg border border-cs-border/30 rounded-lg p-3 hover:border-cs-cyan/50 cursor-pointer transition-all">
+                  <div key={i} onClick={() => item.cve_id && (setThreatPanel(null), setCveDetail(item))} className="bg-cs-bg border border-cs-border rounded-md p-3 hover:border-cs-border2 cursor-pointer transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-cs-cyan font-mono text-sm font-bold">{item.cve_id || item.indicator}</span>
-                      {item.cvss_score && <span className={`text-[0.6rem] font-mono px-2 py-0.5 rounded font-bold ${item.cvss_score >= 9 ? 'bg-cs-red/20 text-cs-red' : 'bg-cs-orange/20 text-cs-orange'}`}>CVSS {item.cvss_score}</span>}
-                      {item.confidence && <span className={`text-[0.6rem] font-mono px-2 py-0.5 rounded ${item.confidence >= 80 ? 'bg-cs-red/20 text-cs-red' : 'bg-cs-cyan/20 text-cs-cyan'}`}>{item.confidence}% conf</span>}
+                      <span className="text-cs-text font-mono text-sm font-medium">{item.cve_id || item.indicator}</span>
+                      {item.cvss_score && <span className={`text-xs tabular-nums font-medium ${item.cvss_score >= 9 ? 'text-cs-red' : 'text-cs-orange'}`}>CVSS {item.cvss_score}</span>}
+                      {item.confidence && <span className={`text-xs tabular-nums ${item.confidence >= 80 ? 'text-cs-red' : 'text-cs-text2'}`}>{item.confidence}% conf</span>}
                     </div>
-                    <div className="text-[0.65rem] text-cs-text2 leading-relaxed">{(item.description || item.name || item.threat_type || '')?.slice(0, 200)}</div>
+                    <div className="text-xs text-cs-text2 leading-relaxed">{(item.description || item.name || item.threat_type || '')?.slice(0, 200)}</div>
                   </div>
                 ))}
               </div>

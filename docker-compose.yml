@@ -14,7 +14,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:8000
         NEXT_PUBLIC_API_KEY: ${CYBERSENTINEL_API_KEY:-}
     ports:
-      - "3002:3000"
+      - "3002:3002"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
       - NEXT_PUBLIC_API_KEY=${CYBERSENTINEL_API_KEY:-}

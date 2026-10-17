@@ -45,7 +45,7 @@ export default function Sidebar({ tools, activeTool, mobSidebar, onPickTool, onO
       <div className="flex items-center gap-2 px-3 py-2 mt-2 border-t border-cs-border text-[0.65rem] text-cs-text3 font-mono">
         <strong className="text-cs-cyan text-lg">{tools.length}</strong> tools across <strong>{Object.keys(grouped).length}</strong> categories
       </div>
-      <div className="px-3 pb-2 text-[0.5rem] text-cs-text3 font-mono">CyberSentinel AI v3.0 | Agentic</div>
+      <div className="px-3 pb-2 text-[0.5rem] text-cs-text3 font-mono">Cyber Agentic AI | MCP + Multi-Agent</div>
     </aside>
   )
 }

@@ -110,6 +110,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         client_ip = _get_client_ip(request)
 
+        # The in-process agents call the MCP server many times per investigation
+        if path.startswith("/mcp-server") and client_ip in ("127.0.0.1", "::1"):
+            return await call_next(request)
+
         # Determine rate limit tier
         is_scan = any(path.startswith(p) for p in SCAN_PATHS)
         if is_scan:

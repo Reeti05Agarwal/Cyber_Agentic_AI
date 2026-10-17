@@ -9,7 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings, validate_security_settings
 from app.core.auth import require_api_key
 from app.core.logging import get_logger
-from app.routers import chat, tools, health, graph, knowledge, scan, intel, history, settings as settings_router, threat_feed, export, elk, splunk, wazuh
+from app.routers import chat, tools, health, graph, knowledge, scan, intel, history, settings as settings_router, threat_feed, export, elk, splunk, wazuh, agents
+from app.mcp_server import mcp
 
 logger = get_logger(__name__)
 
@@ -57,7 +58,9 @@ async def lifespan(app: FastAPI):
     security_errors = validate_security_settings()
     if security_errors:
         logger.error("Security configuration errors: %s", "; ".join(security_errors))
-    yield
+    # The mounted MCP app's own lifespan does not run, so start its session manager here
+    async with mcp.session_manager.run():
+        yield
 
 
 app = FastAPI(
@@ -96,6 +99,10 @@ app.include_router(export.router, prefix="/api", dependencies=[Depends(require_a
 app.include_router(elk.router, prefix="/api", dependencies=[Depends(require_api_key)])
 app.include_router(splunk.router, prefix="/api", dependencies=[Depends(require_api_key)])
 app.include_router(wazuh.router, prefix="/api", dependencies=[Depends(require_api_key)])
+app.include_router(agents.router, prefix="/api", dependencies=[Depends(require_api_key)])
+
+# MCP server (Streamable HTTP) at /mcp-server/mcp
+app.mount("/mcp-server", mcp.streamable_http_app())
 
 
 @app.get("/")
@@ -104,6 +111,7 @@ async def root():
         "name": settings.app_name,
         "version": settings.app_version,
         "tools": 33,
-        "features": ["streaming-ai", "agentic-tools", "neo4j-graph", "chromadb-rag", "multi-provider", "live-scans", "threat-intel", "chat-history", "pdf-export", "sqlmap", "elk-siem", "splunk-siem", "wazuh-siem"],
+        "features": ["streaming-ai", "agentic-tools", "neo4j-graph", "chromadb-rag", "multi-provider", "live-scans", "threat-intel", "chat-history", "pdf-export", "sqlmap", "elk-siem", "splunk-siem", "wazuh-siem", "mcp-server", "multi-agent"],
+        "mcp": "/mcp-server/mcp",
         "docs": "/docs",
     }

@@ -34,13 +34,10 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
-      ollama:
-        condition: service_started
-        required: false  # Not started when using your own Ollama on the host
       sandbox:
         condition: service_started
     extra_hosts:
-      - "host.docker.internal:host-gateway"  # Lets the backend reach Ollama running on the host
+      - "host.docker.internal:host-gateway"  # For host access from Docker
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s
@@ -51,56 +48,6 @@ services:
       - backend_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock:ro  # Read-only access to sandbox container
     restart: unless-stopped
-
-  # ── OLLAMA (Local AI) ──────────────────────────────
-  # Only starts with the "docker-ollama" profile (COMPOSE_PROFILES in .env).
-  # Leave the profile out to use an Ollama already running on the host.
-  ollama:
-    profiles: ["docker-ollama"]
-    image: ollama/ollama:latest
-    ports:
-      - "127.0.0.1:11434:11434"  # Localhost only - never bind 0.0.0.0
-    environment:
-      - OLLAMA_HOST=0.0.0.0             # Listen on all interfaces for Docker inter-container networking
-      - OLLAMA_MAX_LOADED_MODELS=1      # Prevent memory exhaustion
-      - OLLAMA_KEEP_ALIVE=5m            # Unload idle models after 5 min
-    volumes:
-      - ollama_data:/root/.ollama
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-          cpus: "4.0"
-    security_opt:
-      - no-new-privileges:true
-    healthcheck:
-      test: ["CMD-SHELL", "ollama list || exit 1"]
-      interval: 10s
-      timeout: 10s
-      retries: 15
-      start_period: 30s
-    restart: unless-stopped
-    # GPU support (uncomment if you have NVIDIA GPU):
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: all
-    #           capabilities: [gpu]
-
-  # ── OLLAMA MODEL PULLER (auto-downloads OLLAMA_MODEL) ──
-  ollama-init:
-    profiles: ["docker-ollama"]
-    image: curlimages/curl:latest
-    depends_on:
-      ollama:
-        condition: service_healthy
-    entrypoint: >
-      sh -c "echo 'Pulling ${OLLAMA_MODEL:-qwen2.5:7b} model...' &&
-             curl -s http://ollama:11434/api/pull -d '{\"name\":\"${OLLAMA_MODEL:-qwen2.5:7b}\"}' &&
-             echo 'Model ready!'"
-    restart: "no"
 
   # ── NEO4J (Graph Database) ──────────────────────────
   neo4j:
@@ -182,8 +129,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-volumes:
-  ollama_data:
+volumes: 
   neo4j_data:
   backend_data:
   elasticsearch_data:

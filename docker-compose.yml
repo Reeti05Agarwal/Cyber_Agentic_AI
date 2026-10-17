@@ -36,8 +36,11 @@ services:
         condition: service_healthy
       ollama:
         condition: service_started
+        required: false  # Not started when using your own Ollama on the host
       sandbox:
         condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Lets the backend reach Ollama running on the host
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s
@@ -50,7 +53,10 @@ services:
     restart: unless-stopped
 
   # ── OLLAMA (Local AI) ──────────────────────────────
+  # Only starts with the "docker-ollama" profile (COMPOSE_PROFILES in .env).
+  # Leave the profile out to use an Ollama already running on the host.
   ollama:
+    profiles: ["docker-ollama"]
     image: ollama/ollama:latest
     ports:
       - "127.0.0.1:11434:11434"  # Localhost only - never bind 0.0.0.0
@@ -83,15 +89,16 @@ services:
     #           count: all
     #           capabilities: [gpu]
 
-  # ── OLLAMA MODEL PULLER (auto-downloads qwen2.5:7b) ──
+  # ── OLLAMA MODEL PULLER (auto-downloads OLLAMA_MODEL) ──
   ollama-init:
+    profiles: ["docker-ollama"]
     image: curlimages/curl:latest
     depends_on:
       ollama:
         condition: service_healthy
     entrypoint: >
-      sh -c "echo 'Pulling qwen2.5:7b model...' &&
-             curl -s http://ollama:11434/api/pull -d '{\"name\":\"qwen2.5:7b\"}' &&
+      sh -c "echo 'Pulling ${OLLAMA_MODEL:-qwen2.5:7b} model...' &&
+             curl -s http://ollama:11434/api/pull -d '{\"name\":\"${OLLAMA_MODEL:-qwen2.5:7b}\"}' &&
              echo 'Model ready!'"
     restart: "no"
 

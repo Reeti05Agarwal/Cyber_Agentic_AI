@@ -13,6 +13,40 @@ guardrail -> planner -> approval (human) -> investigator <-> MCP tools -> report
 | API | `backend/app/routers/agents.py` | Start, approve and inspect investigations |
 | Evaluation | `backend/app/agents/evaluate.py` | Scores tool selection, approval gating, guardrails, latency and tokens |
 
+## Using your own Ollama instead of the Docker one
+
+1. Make the host Ollama reachable from containers (by default it only listens on 127.0.0.1):
+
+   ```bash
+   sudo systemctl edit ollama
+   ```
+
+   Add these lines, save, then restart it:
+
+   ```ini
+   [Service]
+   Environment="OLLAMA_HOST=0.0.0.0:11434"
+   ```
+
+   ```bash
+   sudo systemctl restart ollama
+   ```
+
+   This also exposes port 11434 to your local network; block it in your firewall if that matters.
+
+2. Pull the model on the host: `ollama pull qwen2.5:7b` (or set `OLLAMA_MODEL` in `.env` to a model you already have that supports tool calling, such as `llama3.1` or `qwen2.5`).
+
+3. In `.env`, switch to option B:
+
+   ```ini
+   COMPOSE_PROFILES=
+   OLLAMA_BASE_URL=http://host.docker.internal:11434
+   ```
+
+4. Start the stack: `docker compose up -d --build`. The `ollama` and `ollama-init` containers are skipped.
+
+Check the backend can reach it: `docker compose exec backend curl -s http://host.docker.internal:11434/api/tags`.
+
 ## MCP server
 
 Endpoint: `http://localhost:8000/mcp-server/mcp` (Streamable HTTP, stateless, JSON responses).

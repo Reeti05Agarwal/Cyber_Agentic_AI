@@ -29,7 +29,7 @@ class ChatRequest(BaseModel):
 async def _stream_cached(text: str):
     """Stream a cached response token-by-token to match the SSE format."""
     # Add source indicator
-    full = text + "\n\n---\n*⚡ Instant response from CyberSentinel knowledge base (493 cached)*"
+    full = text + "\n\n---\n*⚡ Instant response from Cyber Agentic AI knowledge base (493 cached)*"
     # Stream in chunks for smooth animation
     chunk_size = 12
     for i in range(0, len(full), chunk_size):

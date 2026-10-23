@@ -379,14 +379,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Creator */}
-        <div>
-          <div className="text-xs font-medium text-cs-text3 mb-2">Original author</div>
-          <div className="bg-cs-bg3 border border-cs-border rounded-md p-3">
-            <a href="https://www.credly.com/users/eskintan/badges#credly" target="_blank" rel="noreferrer" className="font-medium text-cs-text text-sm hover:text-cs-cyan transition-colors">3sk1nt4n</a>
-            <div className="text-xs text-cs-text3 mt-0.5">Author of CyberSentinel AI, the base platform</div>
-          </div>
-        </div>
+       
       </aside>
 
       {/* MODALS */}

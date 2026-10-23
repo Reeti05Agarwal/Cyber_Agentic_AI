@@ -23,8 +23,7 @@ export default function Header({ providers, provider, serviceHealth, onProviderC
       <div className="flex items-center gap-2.5 cursor-pointer select-none" onClick={onNewChat}>
         <div className="w-7 h-7 rounded-md border border-cs-border2 bg-cs-bg3 flex items-center justify-center text-xs font-semibold text-cs-text">CA</div>
         <div className="leading-tight">
-          <div className="font-semibold text-sm text-cs-text">Cyber Agentic AI</div>
-          <div className="text-[0.7rem] text-cs-text3">built on CyberSentinel AI (open source)</div>
+          <div className="font-semibold text-sm text-cs-text">Cyber Agentic AI</div> 
         </div>
       </div>
       <div className="flex items-center gap-2">

@@ -99,7 +99,7 @@ def _generate_pdf(messages: list[ExportMessage], title: str) -> bytes:
 
     # Header
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    elements.append(Paragraph("🛡️ CYBERSENTINEL AI", title_style))
+    elements.append(Paragraph("🛡️ Cyber Agentic AI", title_style))
     elements.append(Paragraph(f"{title}", styles['Heading2']))
     elements.append(Paragraph(
         f"Generated: {now} | Powered by SolventCyber.com | {len(messages)} messages",

@@ -1,6 +1,6 @@
 """
-CyberSentinel v3.0 - MCP Server
-Exposes CyberSentinel's security tools, knowledge base and prompts over the
+MCP Server
+Exposes security tools, knowledge base and prompts over the
 Model Context Protocol, so any MCP client (the LangGraph agents in app/agents,
 Claude Desktop, Cursor, MCP Inspector) can discover and call them.
 
